@@ -1,0 +1,43 @@
+#!/bin/bash
+
+SOURCEDIR=src
+BUILDDIR=build
+OUTPUT=player
+LDFLAGS='-s'
+LDLIBS='-lm -lalleg -lpng'
+
+FILES="$(find $SOURCEDIR -type f -iname '*.c')"
+OBJSED="sed -E -e s/^[^/]+/$BUILDDIR/g -e s/\.c\$/\.o/g"
+
+# Prints the var definitions
+printf 'LDFLAGS=%s\n' "$LDFLAGS"
+printf 'LDLIBS=%s\n' "$LDLIBS"
+printf '\n'
+
+# Prints all directive
+
+printf 'all: '; <<<"$FILES" $OBJSED | tr '\n' ' '
+printf '\n\tgcc $(CFLAGS) -o %s ' "$OUTPUT"; <<<"$FILES" $OBJSED | tr '\n' ' '
+printf ' $(LDFLAGS) $(LDLIBS)\n\n'
+
+# Prints 
+
+while read FILE;
+do
+	OUTFILE=$(<<<"$FILE" $OBJSED);
+	OUTDIR=$(dirname "$OUTFILE");
+	
+	printf '%s: %s ' "$OUTFILE" "$FILE"
+	
+	grep -E '^#include\s+"' "$FILE" | cut -d \" -f2 | sed -E "s,^,$(dirname "$FILE")/,g" | \
+		xargs -d$'\n' -n1 --no-run-if-empty -- readlink -ms | \
+		sed -E "s/^.{$(readlink -mns . | wc -c)}.//g" | tr '\n' ' '
+	
+	printf '\n\t@ mkdir -p %s\n\tgcc $(CFLAGS) -c %s -o %s\n\n' "$OUTDIR" "$FILE" "$OUTFILE"
+	
+done <<<"$FILES"
+
+
+# Prints 'clean' directive
+
+printf "clean:\n\trm -rf -- %s/* %s\n" "$BUILDDIR" "$OUTPUT"

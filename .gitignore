@@ -1,4 +1,4 @@
-build
-player
-tmp
-output
+/build
+/player
+/tmp
+/output

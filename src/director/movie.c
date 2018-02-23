@@ -38,10 +38,10 @@ int read_movie(movie_t *movie, FILE *fp) {
 		return 1;
 	// Read movie info
 	if (seek_movie_search(movie, "VWCF", 0)) {
-		error("VWCF block not present on the mmap.");
-		goto clean_mmap;
+		warning("VWCF block not present on the mmap.");
+		memset(&movie->info, 0, sizeof(movieinfo_t));
 	}
-	if (read_movieinfo(&movie->info, fp, movie->encoding)) {
+	else if (read_movieinfo(&movie->info, fp, movie->encoding)) {
 		goto clean_mmap;
 	}
 	// Read keys
@@ -59,12 +59,11 @@ int read_movie(movie_t *movie, FILE *fp) {
 	}
 	if (read_castlist(&movie->castlist, fp, movie->encoding)) {
 		goto clean_keys;
-	};
+	}
 	// Read score
 	if (seek_movie_search(movie, "VWSC", 0)) {
 		warning("Score block not present on the mmap.");
 		memset(&movie->score, 0, sizeof(score_t));
-		// goto clean_castlist;
 	}
 	else if (read_score(&movie->score, fp, movie->encoding)) {
 		goto clean_castlist;

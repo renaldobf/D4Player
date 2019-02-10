@@ -111,7 +111,7 @@ typedef struct {
 #define SCORE_4CC_LE "CSWV"
 
 #define INK_TYPE_COPY               0 // Copy
-#define INK_TYPE_TRASNSPARENT       1 // Transparent
+#define INK_TYPE_TRANSPARENT        1 // Transparent
 #define INK_TYPE_REVERSE            2 // Reverse
 #define INK_TYPE_GHOST              3 // Ghost
 #define INK_TYPE_NOT_COPY           4 // Not Copy

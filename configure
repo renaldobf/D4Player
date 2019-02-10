@@ -1,15 +1,20 @@
 #!/bin/bash
-
+(
 SOURCEDIR=src
+SOURCEEXT=c
 BUILDDIR=build
-OUTPUT=player
+OUTPUT=d4player
+CC='gcc'
+CFLAGS='-Wall -O3'
 LDFLAGS='-s'
 LDLIBS='-lm -lalleg -lpng'
 
-FILES="$(find $SOURCEDIR -type f -iname '*.c')"
-OBJSED="sed -E -e s/^[^/]+/$BUILDDIR/g -e s/\.c\$/\.o/g"
+FILES="$(find $SOURCEDIR -type f -iname "*.$SOURCEEXT" | sort)"
+OBJSED="sed -E -e s/^[^/]+/$BUILDDIR/g -e s/\.$SOURCEEXT\$/\.o/g"
 
 # Prints the var definitions
+printf 'CC=%s\n' "$CC"
+printf 'CFLAGS=%s\n' "$CFLAGS"
 printf 'LDFLAGS=%s\n' "$LDFLAGS"
 printf 'LDLIBS=%s\n' "$LDLIBS"
 printf '\n'
@@ -17,7 +22,7 @@ printf '\n'
 # Prints all directive
 
 printf 'all: '; <<<"$FILES" $OBJSED | tr '\n' ' '
-printf '\n\tgcc $(CFLAGS) -o %s ' "$OUTPUT"; <<<"$FILES" $OBJSED | tr '\n' ' '
+printf '\n\t$(CC) $(CFLAGS) -o %s ' "$OUTPUT"; <<<"$FILES" $OBJSED | tr '\n' ' '
 printf ' $(LDFLAGS) $(LDLIBS)\n\n'
 
 # Prints 
@@ -33,11 +38,13 @@ do
 		xargs -d$'\n' -n1 --no-run-if-empty -- readlink -ms | \
 		sed -E "s/^.{$(readlink -mns . | wc -c)}.//g" | tr '\n' ' '
 	
-	printf '\n\t@ mkdir -p %s\n\tgcc $(CFLAGS) -c %s -o %s\n\n' "$OUTDIR" "$FILE" "$OUTFILE"
+	printf '\n\t@ mkdir -p %s\n\t$(CC) $(CFLAGS) -c %s -o %s\n\n' "$OUTDIR" "$FILE" "$OUTFILE"
 	
 done <<<"$FILES"
 
-
 # Prints 'clean' directive
+printf "clean:\n\trm -rf -- %s %s\n\n" "$BUILDDIR" "$OUTPUT"
 
-printf "clean:\n\trm -rf -- %s/* %s\n" "$BUILDDIR" "$OUTPUT"
+# Prints 'install directive'
+printf 'install: %s\n\t./install\n\n.PHONY: install\n\n' "$OUTPUT"
+) > makefile

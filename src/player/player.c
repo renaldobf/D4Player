@@ -555,10 +555,10 @@ int player(movie_t *movie) {
 				destroy_bitmap(mask);
 			}
 			// BACKGROUND TRANSPARENT
-			// TRASNSPARENT/ NOT TRANSPARENT
+			// TRANSPARENT/ NOT TRANSPARENT
 			else if (
 				ink_type == INK_TYPE_BKGND_TRANSPARENT ||
-				ink_type == INK_TYPE_TRASNSPARENT ||
+				ink_type == INK_TYPE_TRANSPARENT ||
 				ink_type == INK_TYPE_NOT_TRANSPARENT
 			) {
 				if (bgcolor == 0 && fgcolor == 255)
@@ -569,6 +569,7 @@ int player(movie_t *movie) {
 					color_map = &g_table_tint;
 					draw_lit_sprite(copy, bmp, 0, 0, fgcolor);
 					masked_stretch_blit(copy, buffer, 0, 0, bmp->w, bmp->h, left, top, width, height);
+					destroy_bitmap(copy);
 				}
 			}
 			else {

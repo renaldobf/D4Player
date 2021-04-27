@@ -42,9 +42,9 @@ For the full set of available options, run with `-h` option.
 The player should able to work with Director 4 files, both little and big endian encodings. The file version is not checked prior to playing it.
 It is possible to check warnings using the "no play" option `-np`.
 
-On Linux, some users may experience lack of sound due to incompatibility with OSS and the way Allegro was compiled, specially on Debian/Ubuntu packages version 4.4.2 and up. Using `pdasp` wrapper might be a workaround if your system uses PulseAudio:
+On Linux, some users may experience lack of sound due to incompatibility with OSS and the way Allegro was compiled, specially on Debian/Ubuntu packages version 4.4.2 and up. Using `padsp` wrapper might be a workaround if your system uses PulseAudio:
 
-	pdasp ./d4player /path/to/file
+	padsp ./d4player /path/to/file
 
 The player is not capable of running Lingo scripts. If the movie has scripts, specially if it heavely depends on them, chances are that the frames are simply going to flash on screen before the player exits.
 
